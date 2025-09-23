@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import os
 import platform
+import sysconfig
 
 from . import asyncio as _test_asyncio
 from . import exclusions
@@ -1637,6 +1638,12 @@ class SuiteRequirements(Requirements):
         )
 
     @property
+    def gil_enabled(self):
+        return exclusions.only_if(
+            lambda: not util.freethreading, "GIL-enabled build needed"
+        )
+
+    @property
     def is64bit(self):
         return exclusions.only_if(lambda: util.is64bit, "64bit required")
 
@@ -1658,7 +1665,7 @@ class SuiteRequirements(Requirements):
         gc.collect() is called, as well as clean out unreferenced subclasses.
 
         """
-        return self.cpython
+        return self.cpython + self.gil_enabled
 
     @property
     def no_coverage(self):

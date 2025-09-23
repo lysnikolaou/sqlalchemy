@@ -1,5 +1,7 @@
 """Requirements specific to SQLAlchemy's own unit tests."""
 
+import sysconfig
+
 from sqlalchemy import exc
 from sqlalchemy.sql import sqltypes
 from sqlalchemy.sql import text
@@ -408,7 +410,7 @@ class DefaultRequirements(SuiteRequirements):
         gc.collect() is called, as well as clean out unreferenced subclasses.
 
         """
-        return self.cpython + skip_if("+aiosqlite")
+        return self.cpython + self.gil_enabled + skip_if("+aiosqlite")
 
     @property
     def memory_process_intensive(self):
